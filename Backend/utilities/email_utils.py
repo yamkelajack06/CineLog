@@ -1,11 +1,14 @@
 import random
 import os
+import string
+from dotenv import load_dotenv
 from mailjet_rest import Client
 from schemas.user import User
 from schemas.token import Token
 from utilities.general_utils import General_Utils
 from database.database import Database
 
+load_dotenv() 
 class Email_Utils:
     #token generation
     @staticmethod
@@ -13,7 +16,7 @@ class Email_Utils:
         token = ''.join(random.choices(string.digits, k=5))
 
         return Token(
-            id = Email_Utils.generate_token_id(),
+            id = General_Utils.generate_random_id(),
             user_id = user.id,
             token_hash = General_Utils.hash_string(token),
             raw_token = token
@@ -46,18 +49,18 @@ class Email_Utils:
 
     #to be used as a decorator, it extends any function that sends the token
     @staticmethod
-    def send_email(sender_email:str,reciever_email:str, message:str, token_type:str, TOKEN_VALUE:str, EXPIRY_TIME:str):
-        api_key = os.environ['MJ_APIKEY_PUBLIC']
-        api_secret = os.environ['MJ_APIKEY_PRIVATE']
+    def send_email(sender_email:str,reciever_email:str, token_type:str, token_value:str, expiry_time:str):
+        api_key = os.environ['MJ_API_KEY']
+        api_secret = os.environ['MJ_SECRET_KEY']
         mailjet = Client(auth=(api_key, api_secret))
 
         data = {
 	            'FromEmail': sender_email,
-	            'FromName': reciever_email,
+	            'FromName': "CineLog",
 	            'Subject': f"CineLog: {token_type}",
-	            'Text-part': message,
+	            'Text-part': f"Your CineLog {token_type} token is: {token_value}\nExpires: {expiry_time}\n\nDo not share this token with anyone.",
 	            
-                'Html-part': """<!DOCTYPE html>
+                'Html-part': f"""<!DOCTYPE html>
                                 <html>
                                 <head>
                                 <meta charset="UTF-8">
@@ -76,11 +79,11 @@ class Email_Utils:
                                 </p>
       
                                 <div style="background: #f4f6f8; border: 1px solid #ccc; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; text-align: center; color: #2c3e50;">
-                                {{TOKEN_VALUE}}
+                                {token_value}
                                 </div>
       
                                 <p style="font-size: 14px; color: #555;">
-                                <strong>Expiry:</strong> {{EXPIRY_TIME}}
+                                <strong>Expiry:</strong> {expiry_time}
                                 </p>
       
                                 <h3 style="color: #2c3e50; margin-top: 30px;">Important Information</h3>
