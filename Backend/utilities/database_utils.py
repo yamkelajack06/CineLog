@@ -5,11 +5,21 @@ from schemas.user import User
 class Database_Utils:
     
     @staticmethod
-    def check_user_exists(user:User) -> bool:
-        pass
+    def check_user_exists(user: User) -> bool | ApiResponse:
+        try:
+            result = Database.query(
+                "SELECT 1 FROM users WHERE username = :username OR email = :email",
+                {
+                    "username": user.username,
+                    "email": user.email
+                }
+            )
 
-    def generate_unique_id() -> int:
-        pass
+            if result.status != "success":
+                return ApiResponse(status="error", message=result.message)
 
-    def hash_password(password:str) -> str:
-        pass
+            return bool(result.data)  # True if user exists, False if not
+
+        except Exception as e:
+            return ApiResponse(status="error", message=str(e))
+
