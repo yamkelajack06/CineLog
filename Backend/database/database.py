@@ -1,7 +1,7 @@
 import os
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
-from utilities.response import ApiResponse
+from schemas.response import ApiResponse
 
 load_dotenv()
 
@@ -10,13 +10,13 @@ class Database:
 
     #setup the database
     @classmethod
-    def setup(cls):
+    def setup(cls) -> None:
         db_url = os.getenv("CONNECTION_STRING")
         cls.engine = create_engine(db_url)
 
     #custom query method for database interaction
     @staticmethod
-    def query(sql_string: str, params: dict = None):
+    def query(sql_string: str, params: dict = None) -> ApiResponse:
         if not Database.engine:
             Database.setup()
             
