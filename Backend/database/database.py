@@ -21,10 +21,9 @@ class Database:
             Database.setup()
             
         try:
-            with Database.engine.connect() as conn:
+            with Database.engine.begin() as conn:
                 #execute query
                 result = conn.execute(text(sql_string), params or {})
-                conn.commit()
                 
                 #format database return data
                 if result.returns_rows:

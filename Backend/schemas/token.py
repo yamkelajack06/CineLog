@@ -2,8 +2,8 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class Token(BaseModel):
-    id: int
-    user_id:int
+    id: str
+    user_id:str
     token_hash:str
     raw_token:str
     expiry: datetime

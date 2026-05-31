@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from schemas.response import ApiResponse
-from schemas.user import User
+from schemas.user import UserCreate, UserInDB
 from schemas.requests import ResendTokenRequest
 from services.register import Register
 from services.email_service import Email_Service
@@ -9,7 +9,7 @@ from database.database import Database
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=ApiResponse)
-async def handle_registration(user: User) -> ApiResponse:
+async def handle_registration(user: UserCreate) -> ApiResponse:
     # Register the user in the database
     register_result = Register.register_user(user)
 
@@ -19,18 +19,23 @@ async def handle_registration(user: User) -> ApiResponse:
 
     # Fetch the newly created user ID from the database
     user_query = Database.query(
-        "SELECT id FROM users WHERE email = :email", 
+        "SELECT id, password_hash FROM users WHERE email = :email", 
         {"email": user.email}
     )
     
     # Update the user object with the fetched ID
     if user_query.status == "success" and user_query.data:
-        user.id = user_query.data[0]["id"]
+        db_user = UserInDB(
+            id=user_query.data[0]["id"],
+            username=user.username,
+            email=user.email,
+            password_hash=user_query.data[0]["password_hash"]
+        )
     else:
         return ApiResponse(status="error", message="Registration succeeded, but failed to initialize email verification.")
 
     # Send the verification email asynchronously
-    email_result = await Email_Service.send_verification_email(user)
+    email_result = await Email_Service.send_verification_email(db_user)
 
     # Handle email sending failure
     if email_result.status == "error":
@@ -44,7 +49,7 @@ async def handle_registration(user: User) -> ApiResponse:
 async def handle_resend_token(request: ResendTokenRequest) -> ApiResponse:
     # Look up the user by their email address
     user_query = Database.query(
-        "SELECT id, username, email, status FROM users WHERE email = :email",
+        "SELECT id, username, email, status, password_hash FROM users WHERE email = :email",
         {"email": request.email}
     )
 
@@ -59,10 +64,11 @@ async def handle_resend_token(request: ResendTokenRequest) -> ApiResponse:
         return ApiResponse(status="error", message="This account is already verified.")
 
     # Reconstruct the user object for the email service
-    target_user = User(
+    target_user = UserInDB(
         id=user_data["id"],
         username=user_data["username"],
-        email=user_data["email"]
+        email=user_data["email"],
+        password_hash=user_data["password_hash"]
     )
 
     # Trigger the email service to resend the token

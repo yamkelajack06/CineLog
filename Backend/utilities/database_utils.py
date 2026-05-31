@@ -1,11 +1,11 @@
 from schemas.response import ApiResponse
 from database.database import Database
-from schemas.user import User
+from schemas.user import UserBase
 
 class Database_Utils:
     
     @staticmethod
-    def check_user_exists(user: User) -> bool | ApiResponse:
+    def check_user_exists(user: UserBase) -> bool | ApiResponse:
         try:
             result = Database.query(
                 "SELECT 1 FROM users WHERE username = :username OR email = :email",

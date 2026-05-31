@@ -1,12 +1,12 @@
 from database.database import Database
 from schemas.response import ApiResponse
-from schemas.user import User 
+from schemas.user import UserCreate 
 from utilities.database_utils import Database_Utils
 from utilities.general_utils import General_Utils
 
 class Register:
     @staticmethod
-    def register_user(user:User) -> ApiResponse:
+    def register_user(user:UserCreate) -> ApiResponse:
         try:
             #first check if the user exists
             exists:bool| ApiResponse = Database_Utils.check_user_exists(user)

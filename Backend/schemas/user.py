@@ -2,17 +2,26 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
-class User(BaseModel):
-    id: Optional[str] = None   # Optional so frontend doesn’t need to send it
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
+
+class UserBase(BaseModel):
     username: str
     email: EmailStr
+
+class UserCreate(UserBase):
     password: str
-    status: str
-    failed_login_attempts: int
-    lockout_expiry: Optional[datetime]
-    created_at: datetime
+
+class UserInDB(UserBase):
+    id: str
+    password_hash: str
+    status: str = "unverified"
+    failed_login_attempts: int = 0
+    lockout_expiry: Optional[datetime] = None
+    created_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
