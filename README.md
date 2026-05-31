@@ -71,5 +71,5 @@ CineLog utilizes a strict, utilitarian visual language inspired by professional 
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/cinelog.git](https://github.com/yourusername/cinelog.git)
+git clone [https://github.com/yamkelajack06/cinelog.git](https://github.com/yamkelajack06/cinelog.git)
 cd cinelog
