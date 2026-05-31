@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import styles from "../styles/landing.module.css";
@@ -41,7 +42,7 @@ const SLIDES = [
   },
 ];
 
-const SLIDE_DURATION = 5000;
+const SLIDE_DURATION = 6000;
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -93,8 +94,8 @@ export default function LandingPage() {
           <button className={styles["theme-toggle"]} onClick={toggleTheme} aria-label="Toggle theme">
             {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
           </button>
-          <a href="/login" className={`${styles.btn} ${styles["btn--ghost"]}`}>Sign in</a>
-          <a href="/register" className={`${styles.btn} ${styles["btn--primary"]}`}>Get started</a>
+          <Link to = "login" className={`${styles.btn} ${styles["btn--ghost"]}`}>Sign in</Link>
+          <Link to="register" className={`${styles.btn} ${styles["btn--primary"]}`}>Get Started</Link>
         </div>
       </nav>
 
