@@ -1,15 +1,15 @@
 @import-normalize;
 
 :root {
-  /* Colors */
-  --bg-primary: #FFFFFF;
-  --text-primary: #032541;
-  --color-primary: #01B4E4;
-  --color-secondary: #032541;
-  --color-accent: #EA922C;
+  /* colors */
+  --bg-primary: #F5F5F0;
+  --text-primary: #1A1A1A;
+  --color-primary: #F5C518;
+  --color-secondary: #4a4a4a;
+  --color-accent: #F5C518;
   --color-neutral: #6C757D;
 
-  /* Text size */
+  /* text size */
   --text-xs: 1.2rem;
   --text-sm: 1.4rem;
   --text-base: 1.6rem;
@@ -18,7 +18,7 @@
   --text-2xl: 2.4rem;
   --text-3xl: 3.2rem;
 
-  /* Spacing */
+  /* spacing */
   --space-1: 0.4rem;
   --space-2: 0.8rem;
   --space-3: 1.6rem;
@@ -26,41 +26,37 @@
   --space-5: 3.2rem;
   --space-6: 4.8rem;
 
-  /* Shadows */
+  /* shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
-  /* Border Radius */
+  /* border radius */
   --radius-sm: 0.4rem;
   --radius-md: 0.8rem;
   --radius-lg: 1.6rem;
   --radius-full: 9999px;
 
-  /* Utilities */
+  /* utilities */
   --transition-base: all 0.2s ease-in-out;
   --z-dropdown: 10;
   --z-sticky: 100;
   --z-modal: 1000;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #1A1A1A;
-    --text-primary: #FFFFFF;
-    --color-primary: #F5C518;
-    --color-secondary: #FFFFFF;
-    --color-accent: #48DBFF;
-    --color-neutral: #1A1A1A;
+[data-theme="dark"] {
+  --bg-primary: #1A1A1A;
+  --text-primary: #FFFFFF;
+  --color-primary: #F5C518;
+  --color-secondary: #2A2A2A;
+  --color-accent: #F5C518;
+  --color-neutral: #A0A0A0;
 
-    /* Dark Mode Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
-  }
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
 }
 
-/* Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -68,7 +64,7 @@
 }
 
 html {
-  font-size: 62.5%; /* 1rem = 10px */
+  font-size: 62.5%;
 }
 
 body {

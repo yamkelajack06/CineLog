@@ -26,14 +26,14 @@ class Email_Utils:
     
     #token verification
     @staticmethod
-    def verify_token(user: UserInDB, token: str) -> bool:
+    def verify_token(user_id: str, token: str) -> bool:
         try:
             #get the token associated with the user
             result = Database.query(
                 "SELECT token_hash FROM verification_tokens "
                 "WHERE user_id = :user_id",
                 {
-                    "user_id": user.id,
+                    "user_id": user_id,
                 }
             )
             #check if any is in the database
@@ -49,18 +49,12 @@ class Email_Utils:
                 # Delete token from database
                 Database.query(
                     "DELETE FROM verification_tokens WHERE user_id = :user_id",
-                    {"user_id": user.id}
+                    {"user_id": user_id}
                 )
-
-                #update user status to verified
-                Database.query(
-                    "UPDATE users SET status = 'verified' WHERE id = :user_id",
-                {"user_id": user.id}
-                )
-                
+   
                 # Delete the stored token from local dictionary
                 from services.email_service import Email_Service
-                Email_Service.pending_tokens.pop(user.id, None)
+                Email_Service.pending_tokens.pop(user_id, None)
 
             return is_valid
 

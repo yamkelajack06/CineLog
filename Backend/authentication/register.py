@@ -22,7 +22,7 @@ class Register:
                     "INSERT INTO users (id, username, email, password_hash) VALUES  (:id,:username,:email, :password_hash)",
                     {
                         "id": General_Utils.generate_random_id(), 
-                        "username": user.username,
+                        "username": user.username.strip().lower(), 
                         "email":user.email,
                         "password_hash": General_Utils.hash_string(user.password) 
                     }
@@ -38,6 +38,8 @@ class Register:
                         return ApiResponse(status="error", message="Username already taken")
                     else:
                         return ApiResponse(status="error", message="Registration failed, please try again")
+            else:
+                return ApiResponse(status="error", message="User already exists")
                     
         except Exception as e:
             return ApiResponse(status = "error", message = str(e))

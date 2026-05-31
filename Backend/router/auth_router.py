@@ -1,10 +1,13 @@
 from fastapi import APIRouter
 from schemas.response import ApiResponse
 from schemas.user import UserCreate, UserInDB
-from schemas.requests import ResendTokenRequest
-from services.register import Register
+from schemas.requests import ResendTokenRequest, VerifyTokenRequest
+from authentication.register import Register
 from services.email_service import Email_Service
 from database.database import Database
+from authentication.login import Login
+from schemas.requests import LoginRequest
+from utilities.email_utils import Email_Utils
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -73,3 +76,41 @@ async def handle_resend_token(request: ResendTokenRequest) -> ApiResponse:
 
     # Trigger the email service to resend the token
     return await Email_Service.resend_verification_email(target_user)
+
+@router.post("/verify-token", response_model=ApiResponse)
+async def handle_verify_token(request: VerifyTokenRequest) -> ApiResponse:
+    user_query = Database.query(
+        "SELECT id, status FROM users WHERE TRIM(email) = TRIM(:email)",
+        {"email": request.email}
+    )
+    
+    if user_query.status != "success" or not user_query.data:
+        return ApiResponse(status="error", message="User not found.")
+
+    user_data = user_query.data[0]
+
+    if user_data["status"] == "verified":
+        return ApiResponse(status="error", message="Account is already verified.")
+
+    # This returns a boolean (True/False)
+    is_valid = Email_Utils.verify_token(user_data["id"], request.token)
+
+    # Check the boolean directly
+    if is_valid:
+        update_query = Database.query(
+            "UPDATE users SET status = 'verified' WHERE id = :id", #Update using ID
+            {"id": user_data["id"]}
+        )
+        
+        if update_query.status != "success":
+            return ApiResponse(status="error", message="Token verified, but failed to update account status.")
+
+        # Return a proper ApiResponse
+        return ApiResponse(status="success", message="Account verified successfully.")
+        
+    # Return a proper ApiResponse if the token is invalid
+    return ApiResponse(status="error", message="Invalid or expired token.")
+
+@router.post("/login", response_model=ApiResponse)
+async def handle_login(request: LoginRequest) -> ApiResponse:
+    return Login.login_user(request.email, request.password)

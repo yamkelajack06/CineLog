@@ -21,12 +21,6 @@ class Email_Service:
         expiry_str = (now + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
         result = Email_Utils.send_email(user.email, TOKEN_TYPE, token.raw_token,expiry_str)
 
-        print(f"[DEBUG send_verification_email] user.id: {user.id}")
-        print(f"[DEBUG send_verification_email] token.id: {token.id}")
-        print(f"[DEBUG send_verification_email] token.raw_token: {token.raw_token}")
-        print(f"[DEBUG send_verification_email] token.token_hash: {token.token_hash}")
-        print(f"[DEBUG send_verification_email] token.expiry: {token.expiry}")
-
         if result.status_code != 200:
             return ApiResponse(status = "error", message = "sending email failed", data = result.json())
         else:
@@ -34,7 +28,7 @@ class Email_Service:
             Email_Service.pending_tokens[user.id] = token
 
             # Save to database
-            insert_result = Database.query(
+            Database.query(
                 "INSERT INTO verification_tokens (id, user_id, token_hash, expires_at) VALUES (:id, :user_id, :token_hash, :expiry)",
                 {
                     "id": token.id,
@@ -43,9 +37,6 @@ class Email_Service:
                     "expiry": token.expiry
                 }
             )
-            print(f"[DEBUG send_verification_email] insert result: {insert_result.status} — {insert_result.message}")
-            print(f"[DEBUG send_verification_email] token saved to DB for user_id: {token.user_id}")
-            print(f"[DEBUG send_verification_email] pending_tokens keys after save: {list(Email_Service.pending_tokens.keys())}")
 
             asyncio.create_task(Email_Service.expire_token(user.id, token.raw_token))
             return ApiResponse(status="success", message="Verification email sent")
