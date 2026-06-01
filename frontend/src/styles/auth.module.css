@@ -351,5 +351,4 @@
 /* responsive */
 @media (max-width: 480px) {
   .body { padding: 2.4rem 2rem; }
-  .brand { padding: 2rem 2rem 1.6rem; }
 }

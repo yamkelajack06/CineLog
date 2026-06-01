@@ -14,14 +14,14 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 @router.post("/register", response_model=ApiResponse)
 async def handle_registration(user: UserCreate) -> ApiResponse:
     # Register the user in the database
-    register_result = Register.register_user(user)
+    register_result:ApiResponse = Register.register_user(user)
 
     # Return immediately if registration failed
     if register_result.status == "error":
         return register_result
 
     # Fetch the newly created user ID from the database
-    user_query = Database.query(
+    user_query:ApiResponse = Database.query(
         "SELECT id, password_hash FROM users WHERE email = :email", 
         {"email": user.email}
     )
