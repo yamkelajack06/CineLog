@@ -1,0 +1,355 @@
+/* page */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 2.4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* card */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 44rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 1.6rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* brand header */
+.brand {
+  padding: 2.8rem 3.2rem 2.4rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.brandMark {
+  width: 4rem;
+  height: 4rem;
+  background: var(--color-primary);
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--bg-primary);
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.04em;
+}
+
+.brandTagline {
+  font-size: 1.2rem;
+  color: var(--color-neutral);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 0.1rem;
+}
+
+/* tabs */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+  padding: 1.4rem;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-neutral);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: color 0.2s ease;
+  position: relative;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tabActive {
+  color: var(--color-primary);
+}
+
+.tabActive::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+}
+
+/* form body */
+.body {
+  padding: 3.2rem;
+}
+
+/* feedback banners */
+.feedback {
+  padding: 1.2rem 1.4rem;
+  border-radius: 0.8rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 2.4rem;
+  line-height: 1.4;
+  animation: feedIn 0.25s ease both;
+}
+
+@keyframes feedIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedbackError {
+  background: rgba(180, 60, 60, 0.08);
+  border: 1px solid rgba(180, 60, 60, 0.2);
+  color: #c0504a;
+}
+
+.feedbackSuccess {
+  background: rgba(80, 120, 80, 0.08);
+  border: 1px solid rgba(80, 120, 80, 0.2);
+  color: #4a8a4a;
+}
+
+/* fields */
+.field {
+  margin-bottom: 1.8rem;
+}
+
+.label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-neutral);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.8rem;
+  padding: 1.2rem 1.4rem;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: var(--color-neutral);
+  opacity: 0.5;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.1);
+}
+
+/* token input styled larger for readability */
+.tokenInput {
+  letter-spacing: 0.4em;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 1.4rem;
+}
+
+/* submit button */
+.submit {
+  width: 100%;
+  padding: 1.3rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  margin-top: 0.8rem;
+  font-family: inherit;
+}
+
+.submit:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* loading spinner inside button */
+.spinner {
+  display: inline-block;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--bg-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.8rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* tab switch footer */
+.footerLink {
+  text-align: center;
+  margin-top: 2.4rem;
+  font-size: 1.3rem;
+  color: var(--color-neutral);
+}
+
+.footerLink button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  transition: opacity 0.2s;
+}
+
+.footerLink button:hover {
+  opacity: 0.65;
+}
+
+/* verify step */
+.verifyHeader {
+  text-align: center;
+  margin-bottom: 2.8rem;
+}
+
+.verifyIcon {
+  font-size: 3.6rem;
+  display: block;
+  margin-bottom: 1.2rem;
+}
+
+.verifyTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.8rem;
+}
+
+.verifySubtitle {
+  font-size: 1.4rem;
+  color: var(--color-neutral);
+  line-height: 1.5;
+}
+
+.verifyEmail {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.resendRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 2rem;
+  font-size: 1.3rem;
+  color: var(--color-neutral);
+}
+
+.resendBtn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.resendBtn:hover:not(:disabled) {
+  opacity: 0.65;
+}
+
+.resendBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  color: var(--color-neutral);
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-family: inherit;
+  margin-top: 2rem;
+  width: 100%;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--text-primary);
+}
+
+/* responsive */
+@media (max-width: 480px) {
+  .body { padding: 2.4rem 2rem; }
+  .brand { padding: 2rem 2rem 1.6rem; }
+}
