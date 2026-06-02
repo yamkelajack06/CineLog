@@ -30,7 +30,7 @@ class Email_Utils:
         try:
             #get the token associated with the user
             result = Database.query(
-                "SELECT token_hash FROM verification_tokens "
+                "SELECT token_hash, expires_at FROM verification_tokens "
                 "WHERE user_id = :user_id",
                 {
                     "user_id": user_id,
@@ -40,8 +40,19 @@ class Email_Utils:
             if result.status != "success" or not result.data:
                 return False
             
-            #compare the entered token against the stored one
             stored_hash: str = result.data[0]["token_hash"]
+            expiry_value = result.data[0].get("expires_at")
+            if expiry_value:
+                if isinstance(expiry_value, str):
+                    expiry_value = datetime.strptime(expiry_value, "%Y-%m-%d %H:%M:%S")
+                if expiry_value < datetime.now():
+                    Database.query(
+                        "DELETE FROM verification_tokens WHERE user_id = :user_id",
+                        {"user_id": user_id}
+                    )
+                    return False
+
+            #compare the entered token against the stored one
             is_valid = General_Utils.verify_string(token, stored_hash)
 
             # If valid, clean up both the DB and the local state
@@ -54,7 +65,7 @@ class Email_Utils:
    
                 # Delete the stored token from local dictionary
                 from services.email_service import Email_Service
-                Email_Service.pending_tokens.pop(user_id, None)
+                Email_Service.pending_verification_tokens.pop(user_id, None)
 
             return is_valid
 
@@ -125,3 +136,115 @@ class Email_Utils:
                 status_code = 500
                 def json(self): return {"error": str(e)}
             return MockError()
+        
+    #sends password reset email to user
+    @staticmethod
+    def send_reset_email(receiver_email: str, token_type: str, token_value: str, expiry_time: str):
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        username = os.getenv("SMTP_USERNAME")  
+        password = os.getenv("SMTP_PASSWORD")
+
+        if not username or not password:
+            class MockError:
+                status_code = 500
+                def json(self): return {"error": "SMTP credentials missing"}
+            return MockError()
+
+        msg = EmailMessage()
+        msg["Subject"] = f"CineLog: {token_type}"
+        msg["From"] = username
+        msg["To"] = receiver_email
+
+        html_content = f"""<!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="UTF-8">
+        <title>CineLog Password Reset</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #ddd; border-radius: 6px; padding: 20px;">
+        <h2 style="color: #2c3e50; margin-top: 0;">CineLog Password Reset</h2>
+        <p style="font-size: 15px; color: #333;">Dear User,</p>
+        <p style="font-size: 15px; color: #333;">A password reset request has been submitted for your account. Use this token to reset your password. The token will expire after 5 minutes.</p>
+        <div style="background: #f4f6f8; border: 1px solid #ccc; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; text-align: center; color: #2c3e50;">
+        {token_value}
+        </div>
+        <p style="font-size: 14px; color: #555;"><strong>Expiry:</strong> {expiry_time}</p>
+        <h3 style="color: #2c3e50; margin-top: 30px;">Important Information</h3>
+        <ul style="font-size: 14px; color: #555; padding-left: 20px;">
+        <li>This token is valid only until the expiry time shown above.</li>
+        <li>Do not share this token with anyone. It grants access to reset your account password.</li>
+        <li>If you did not request this token, please disregard this message and secure your account.</li>
+        </ul>
+        <p style="font-size: 13px; color: #888; margin-top: 30px;">This is an automated message from CineLog. Please do not reply directly to this email.</p>
+        </div>
+        </body>
+        </html>"""
+
+        msg.set_content("Please enable HTML to view this message.")
+        msg.add_alternative(html_content, subtype="html")
+
+        try:
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(username, password)
+                server.send_message(msg)
+            
+            class MockResponse:
+                status_code = 200
+                def json(self): return {"message": "success"}
+            return MockResponse()
+
+        except Exception as e:
+            class MockError:
+                status_code = 500
+                def json(self): return {"error": str(e)}
+            return MockError()
+
+    #verify password reset token
+    @staticmethod
+    def verify_reset_token(user_id: str, token: str) -> bool:
+        try:
+            #get the token associated with the user
+            result = Database.query(
+                "SELECT token_hash, expires_at FROM password_reset_tokens "
+                "WHERE user_id = :user_id",
+                {
+                    "user_id": user_id,
+                }
+            )
+            #check if any is in the database
+            if result.status != "success" or not result.data:
+                return False
+            
+            stored_hash: str = result.data[0]["token_hash"]
+            expiry_value = result.data[0].get("expires_at")
+            if expiry_value:
+                if isinstance(expiry_value, str):
+                    expiry_value = datetime.strptime(expiry_value, "%Y-%m-%d %H:%M:%S")
+                if expiry_value < datetime.now():
+                    Database.query(
+                        "DELETE FROM password_reset_tokens WHERE user_id = :user_id",
+                        {"user_id": user_id}
+                    )
+                    return False
+
+            #compare the entered token against the stored one
+            is_valid = General_Utils.verify_string(token, stored_hash)
+
+            # If valid, clean up both the DB and the local state
+            if is_valid:
+                # Delete token from database
+                Database.query(
+                    "DELETE FROM password_reset_tokens WHERE user_id = :user_id",
+                    {"user_id": user_id}
+                )
+
+                from services.email_service import Email_Service
+                Email_Service.pending_reset_tokens.pop(user_id, None)
+
+            return is_valid
+
+        except Exception as e:
+            return False

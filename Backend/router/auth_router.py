@@ -1,13 +1,19 @@
 from fastapi import APIRouter
 from schemas.response import ApiResponse
 from schemas.user import UserCreate, UserInDB
-from schemas.requests import ResendTokenRequest, VerifyTokenRequest
+from schemas.requests import (
+    ResendTokenRequest,
+    VerifyTokenRequest,
+    PasswordResetRequestRequest,
+    PasswordResetVerifyRequest,
+    LoginRequest,
+)
 from authentication.register import Register
 from services.email_service import Email_Service
 from database.database import Database
 from authentication.login import Login
-from schemas.requests import LoginRequest
 from utilities.email_utils import Email_Utils
+from authentication.password_reset import PasswordReset
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -114,3 +120,13 @@ async def handle_verify_token(request: VerifyTokenRequest) -> ApiResponse:
 @router.post("/login", response_model=ApiResponse)
 async def handle_login(request: LoginRequest) -> ApiResponse:
     return Login.login_user(request.email, request.password)
+
+@router.post("/request-password-reset", response_model=ApiResponse)
+async def handle_request_password_reset(request: PasswordResetRequestRequest) -> ApiResponse:
+    # Request a password reset token
+    return await PasswordReset.request_reset(request.email)
+
+@router.post("/reset-password", response_model=ApiResponse)
+async def handle_reset_password(request: PasswordResetVerifyRequest) -> ApiResponse:
+    # Reset the password with a valid token
+    return PasswordReset.reset_password(request.email, request.token, request.new_password)

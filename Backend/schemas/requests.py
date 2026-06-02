@@ -10,3 +10,11 @@ class LoginRequest(BaseModel):
 class VerifyTokenRequest(BaseModel):
     email: EmailStr
     token: str
+
+class PasswordResetRequestRequest(BaseModel):
+    email: EmailStr
+
+class PasswordResetVerifyRequest(BaseModel):
+    email: EmailStr
+    token: str
+    new_password: str

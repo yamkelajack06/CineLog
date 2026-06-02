@@ -1,152 +1,169 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-const API_BASE = "http://localhost:8000";
 
 export type AuthTab = "login" | "register";
 
-interface ApiResponse {
-    status: "success" | "error";
-    message?: string;
-    data?: unknown;
+type ApiResponse<T = unknown> = {
+  status: "success" | "error";
+  message: string;
+  data?: T;
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+
+async function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || "Network response was not ok.");
+  }
+
+  return response.json();
 }
 
-interface AuthState {
-    loading: boolean;
-    error: string | null;
-    success: string | null;
+function useApiStatus() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const clearStatus = () => {
+    setError(null);
+    setSuccess(null);
+  };
+
+  const handleResponse = <T,>(response: ApiResponse<T>) => {
+    if (response.status === "error") {
+      setError(response.message);
+      return false;
+    }
+
+    setSuccess(response.message);
+    return true;
+  };
+
+  return { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse };
 }
 
 export function useAuth() {
-    const [state, setState] = useState<AuthState>({
-        loading: false,
-        error: null,
-        success: null,
-    });
+  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
 
-    const navigate = useNavigate();
+  async function login(email: string, password: string) {
+    clearStatus();
+    setLoading(true);
 
-    function setPartial(partial: Partial<AuthState>) {
-        setState((prev) => ({ ...prev, ...partial }));
+    try {
+      const response = await post("/auth/login", { email, password });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to login");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    function clearMessages() {
-        setPartial({ error: null, success: null });
+  async function register(username: string, email: string, password: string) {
+    clearStatus();
+    setLoading(true);
+
+    try {
+      const response = await post("/auth/register", { username, email, password });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to register");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    async function register(username: string, email: string, password: string) {
-        setPartial({ loading: true, error: null, success: null });
-        try {
-            const res = await fetch(`${API_BASE}/auth/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
-            });
-            const data: ApiResponse = await res.json();
+  return { loading, error, success, login, register };
+}
 
-            if (data.status === "success") {
-                // navigate to verify page, passing email via router state
-                navigate("/verify", { state: { email } });
-            } else {
-                setPartial({ loading: false, error: data.message ?? "Registration failed." });
-            }
-        } catch {
-            setPartial({ loading: false, error: "Could not connect to the server." });
-        }
+export function usePasswordResetRequest() {
+  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+
+  async function requestReset(email: string) {
+    clearStatus();
+    setLoading(true);
+
+    try {
+      const response = await post("/auth/request-password-reset", { email });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to request password reset");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    async function login(email: string, password: string) {
-        setPartial({ loading: true, error: null, success: null });
-        try {
-            const res = await fetch(`${API_BASE}/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-            const data: ApiResponse = await res.json();
+  return { loading, error, success, requestReset };
+}
 
-            if (data.status === "success") {
-                setPartial({ loading: false, success: data.message ?? "Login successful!" });
-                // TODO: store session token
-                setTimeout(() => navigate("/browse"), 1000);
-            } else {
-                setPartial({ loading: false, error: data.message ?? "Login failed." });
-            }
-        } catch {
-            setPartial({ loading: false, error: "Could not connect to the server." });
-        }
+export function useResetPassword() {
+  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+
+  async function resetPassword(email: string, token: string, newPassword: string) {
+    clearStatus();
+    setLoading(true);
+
+    try {
+      const response = await post("/auth/reset-password", {
+        email,
+        token,
+        new_password: newPassword,
+      });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to reset password");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    return {
-        ...state,
-        register,
-        login,
-        clearMessages,
-    };
+  return { loading, error, success, resetPassword };
 }
 
 export function useVerify(email: string) {
-    const [state, setState] = useState<AuthState>({
-        loading: false,
-        error: null,
-        success: null,
-    });
+  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
 
-    const navigate = useNavigate();
+  async function verifyToken(token: string) {
+    clearStatus();
+    setLoading(true);
 
-    function setPartial(partial: Partial<AuthState>) {
-        setState((prev) => ({ ...prev, ...partial }));
+    try {
+      const response = await post("/auth/verify-token", { email, token });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to verify token");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    function clearMessages() {
-        setPartial({ error: null, success: null });
+  async function resendToken() {
+    clearStatus();
+    setLoading(true);
+
+    try {
+      const response = await post("/auth/resend-token", { email });
+      return handleResponse(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to resend token");
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
 
-    async function verifyToken(token: string) {
-        setPartial({ loading: true, error: null, success: null });
-        try {
-            const res = await fetch(`${API_BASE}/auth/verify-token`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, token }),
-            });
-            const data: ApiResponse = await res.json();
-
-            if (data.status === "success") {
-                setPartial({ loading: false, success: "Account verified! Redirecting to sign in…" });
-                setTimeout(() => navigate("/login"), 1200);
-            } else {
-                setPartial({ loading: false, error: data.message ?? "Invalid or expired token." });
-            }
-        } catch {
-            setPartial({ loading: false, error: "Could not connect to the server." });
-        }
-    }
-
-    async function resendToken() {
-        setPartial({ loading: true, error: null, success: null });
-        try {
-            const res = await fetch(`${API_BASE}/auth/resend-token`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
-            });
-            const data: ApiResponse = await res.json();
-
-            if (data.status === "success") {
-                setPartial({ loading: false, success: data.message ?? "New token sent!" });
-            } else {
-                setPartial({ loading: false, error: data.message ?? "Could not resend token." });
-            }
-        } catch {
-            setPartial({ loading: false, error: "Could not connect to the server." });
-        }
-    }
-
-    return {
-        ...state,
-        verifyToken,
-        resendToken,
-        clearMessages,
-    };
+  return { loading, error, success, verifyToken, resendToken };
 }

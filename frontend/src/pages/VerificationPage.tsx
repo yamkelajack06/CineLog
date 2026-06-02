@@ -20,6 +20,12 @@ export default function VerifyPage() {
         if (!email) navigate("/login", { replace: true });
     }, [email, navigate]);
 
+    useEffect(() => {
+        if (success) {
+            navigate("/login", { replace: true, state: { email } });
+        }
+    }, [success, navigate, email]);
+
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (token.trim().length === 5) verifyToken(token.trim());
