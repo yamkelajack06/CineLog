@@ -4,6 +4,7 @@ from schemas.response import ApiResponse
 from utilities.general_utils import General_Utils
 from database.database import Database
 
+
 class Login:
 
     @staticmethod

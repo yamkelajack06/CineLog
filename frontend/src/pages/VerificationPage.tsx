@@ -8,7 +8,7 @@ import styles from "../styles/auth.module.css";
 export default function VerifyPage() {
     const location = useLocation();
     const navigate = useNavigate();
-
+ 
     // email is passed via router state from the register flow
     const email: string = location.state?.email ?? "";
 
@@ -19,12 +19,6 @@ export default function VerifyPage() {
     useEffect(() => {
         if (!email) navigate("/login", { replace: true });
     }, [email, navigate]);
-
-    useEffect(() => {
-        if (success) {
-            navigate("/login", { replace: true, state: { email } });
-        }
-    }, [success, navigate, email]);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
