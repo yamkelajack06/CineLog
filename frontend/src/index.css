@@ -2,24 +2,36 @@
 
 :root {
   /* colors */
-  --bg-primary: #F4F7F9;
-  --surface-card: #FFFFFF;
+  --bg-primary: #f4f7f9;
+  --surface-card: #ffffff;
   --text-primary: #111827;
   --color-primary: #066070;
-  --color-secondary: #6B7280;
+  --color-secondary: #6b7280;
   --color-accent: #066070;
-  --color-neutral: #6B7280;
-  --text-score: #0284C7;
-  --icon-rating: #38BDF8;
-  --icon-genre: #B45309;
-  --border-base: #E5E7EB;
+  --color-neutral: #6b7280;
+  --text-score: #0284c7;
+  --icon-rating: #38bdf8;
+  --icon-genre: #b45309;
+  --border-base: #e5e7eb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f0f4f8;
+  --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --surface-hover: #f8fafc;
+  --surface-muted: #f1f5f9;
+  --color-success: #0d9488;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --icon-watch-hours: #0e7490;
 
   /* text size */
   --text-xs: 1.2rem;
   --text-sm: 1.4rem;
   --text-base: 1.6rem;
   --text-lg: 1.8rem;
-  --text-xl: 2.0rem;
+  --text-xl: 2rem;
   --text-2xl: 2.4rem;
   --text-3xl: 3.2rem;
 
@@ -50,24 +62,38 @@
 }
 
 [data-theme="dark"] {
-  --bg-primary: #0F172A;
+  --bg-primary: #0f172a;
   --surface-card: #111827;
-  --text-primary: #F8FAFC;
+  --text-primary: #f8fafc;
   --color-primary: #066070;
-  --color-secondary: #94A3B8;
+  --color-secondary: #94a3b8;
   --color-accent: #066070;
-  --color-neutral: #94A3B8;
-  --text-score: #38BDF8;
-  --icon-rating: #38BDF8;
-  --icon-genre: #B45309;
+  --color-neutral: #94a3b8;
+  --text-score: #38bdf8;
+  --icon-rating: #38bdf8;
+  --icon-genre: #b45309;
   --border-base: #334155;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #0f172a;
+  --border-color: #334155;
+  --border-strong: #475569;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --surface-hover: #1e293b;
+  --surface-muted: #0f172a;
+  --color-success: #0d9488;
+  --color-warning: #fbbf24;
+  --color-danger: #ef4444;
+  --icon-watch-hours: #22d3ee;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -78,7 +104,15 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   font-size: var(--text-base);
   line-height: 1.5;
   color: var(--text-primary);
