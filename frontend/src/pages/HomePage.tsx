@@ -1,14 +1,13 @@
 import { useTheme } from "../hooks/useTheme";
+import { useFeed } from "../hooks/useFeed";
 import HomeNav from "../components/home/HomeNav";
-import MetricGrid from "../components/home/MetricGrid";
-import ActivityCarousel from "../components/home/ActivityCarousel";
-import DataTablePanel from "../components/home/DataTablePanel";
-import SidebarWidgets from "../components/home/SidebarWidgets";
+import FeedCarousel from "../components/home/FeedCarousel";
 import HomeFooter from "../components/home/HomeFooter";
 import styles from "../styles/home.module.css";
 
 export default function HomePage() {
     const { theme, toggleTheme } = useTheme();
+    const { feed, loading, error } = useFeed();
 
     return (
         <div className={styles.page}>
@@ -16,18 +15,26 @@ export default function HomePage() {
                 <HomeNav theme={theme} toggleTheme={toggleTheme} />
 
                 <main className={styles.hero}>
-                    <h1 className={styles.pageTitle}>Browse your cinema world.</h1>
+                    <h1 className={styles.pageTitle}>Discover your next watch.</h1>
                     <p className={styles.heroSubtitle}>
-                        A clean dashboard view of your watch history, watchlist, and activity. Everything is designed to keep your movie tracking simple, professional, and easy to scan.
+                        Browse trending movies and shows, explore top rated picks, and find what to watch next.
                     </p>
 
-                    <MetricGrid />
-                    <ActivityCarousel />
+                    {/* discover feed section */}
+                    <section id="discover">
+                        {loading && <p className={styles.feedStatus}>Loading feed…</p>}
+                        {error && <p className={styles.feedError}>{error}</p>}
 
-                    <div className={styles.dashboardGrid}>
-                        <DataTablePanel />
-                        <SidebarWidgets />
-                    </div>
+                        {feed && (
+                            <>
+                                <FeedCarousel title="Trending today" items={feed.trending} id="trending" />
+                                <FeedCarousel title="Trending this week" items={feed.trending_this_week} id="trending-week" />
+                                <FeedCarousel title="Popular" items={feed.popular} id="popular" />
+                                <FeedCarousel title="Top rated" items={feed.top_rated} id="top-rated" />
+                                <FeedCarousel title="Upcoming" items={feed.upcoming} id="upcoming" />
+                            </>
+                        )}
+                    </section>
                 </main>
 
                 <HomeFooter />

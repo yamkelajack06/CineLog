@@ -5,6 +5,7 @@ import VerifyPage from "../pages/VerificationPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import HomePage from "../pages/HomePage";
+import MovieDetailPage from "../pages/MovieDetailsPage";
 
 const router = createBrowserRouter([
     { path: "/", element: <LandingPage /> },
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     { path: "/forgot-password", element: <ForgotPasswordPage /> },
     { path: "/reset-password", element: <ResetPasswordPage /> },
     { path: "/browse", element: <HomePage /> },
+    { path: "/details/:mediaType/:id", element: <MovieDetailPage /> },
 ]);
 
 export default router;
