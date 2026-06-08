@@ -6,6 +6,7 @@ import HomeNav from "../components/home/HomeNav";
 import HomeFooter from "../components/home/HomeFooter";
 import styles from "../styles/detail.module.css";
 
+//static images for background
 const TMDB_IMG_W500 = "https://image.tmdb.org/t/p/w500";
 const TMDB_IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 const TMDB_IMG_FACE = "https://image.tmdb.org/t/p/w185";

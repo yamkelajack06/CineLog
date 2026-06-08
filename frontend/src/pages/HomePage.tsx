@@ -2,6 +2,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useFeed } from "../hooks/useFeed";
 import HomeNav from "../components/home/HomeNav";
 import FeedCarousel from "../components/home/FeedCarousel";
+import FeedCarouselSkeleton from "../components/home/FeedCarouselSkeleton";
 import HomeFooter from "../components/home/HomeFooter";
 import styles from "../styles/home.module.css";
 
@@ -22,7 +23,21 @@ export default function HomePage() {
 
                     {/* discover feed section */}
                     <section id="discover">
-                        {loading && <p className={styles.feedStatus}>Loading feed…</p>}
+                        {loading && (
+                            <>
+                                <FeedCarouselSkeleton
+                                    title="Trending today"
+                                    id="trending"
+                                />
+                                <FeedCarouselSkeleton
+                                    title="Trending this week"
+                                    id="trending-week"
+                                />
+                                <FeedCarouselSkeleton title="Popular" id="popular" />
+                                <FeedCarouselSkeleton title="Top rated" id="top-rated" />
+                                <FeedCarouselSkeleton title="Upcoming" id="upcoming" />
+                            </>
+                        )}
                         {error && <p className={styles.feedError}>{error}</p>}
 
                         {feed && (
@@ -42,3 +57,4 @@ export default function HomePage() {
         </div>
     );
 }
+

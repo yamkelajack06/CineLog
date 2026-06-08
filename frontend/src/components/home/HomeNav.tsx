@@ -1,6 +1,6 @@
 import { Search, Sun, Moon, UserCircle, X, Loader2, Film, Tv } from "lucide-react";
 import { useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSearch } from "../../hooks/useSearch";
 import styles from "../../styles/home.module.css";
 
@@ -48,11 +48,9 @@ export default function HomeNav({ theme, toggleTheme }: Props) {
             </div>
 
             <div className={styles.navLinks}>
-                <a href="#overview" className={styles.navLink}>Dashboard</a>
-                {/* discover scrolls to the feed section */}
-                <a href="#discover" className={styles.navLink}>Discover</a>
-                <a href="#watchlist" className={styles.navLink}>Watchlist</a>
-                <a href="#activity" className={styles.navLink}>Activity</a>
+                <Link to = "/dashboard" className = {styles.navLink}>Dashboard</Link>
+                <Link to = "/browse" className = {styles.navLink}>Discover</Link>
+                <Link to = "/watchlist" className = {styles.navLink}>Watchlist</Link>
             </div>
 
             <div className={styles.navActions}>
