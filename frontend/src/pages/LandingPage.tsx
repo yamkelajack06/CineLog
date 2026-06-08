@@ -185,20 +185,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* footer cta */}
-      <section className={styles["footer-cta"]}>
-        <h2>Ready to start logging?</h2>
-        <div className={styles["hero-cta"]}>
-          <a href="/register" className={`${styles.btn} ${styles["btn--primary"]} ${styles["btn--lg"]}`}>
-            Create free account
-          </a>
-          <a href="/login" className={`${styles.btn} ${styles["btn--outline"]} ${styles["btn--lg"]}`}>
-            Sign in
-          </a>
-        </div>
-      </section>
-
       <footer className={styles["landing-footer"]}>
         <span>© {new Date().getFullYear()} CineLog</span>
         <span>Powered by TMDB</span>

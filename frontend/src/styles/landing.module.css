@@ -33,7 +33,7 @@
   width: 3.6rem;
   height: 3.6rem;
   background: var(--color-primary);
-  color: var(--color-secondary);
+  color: var(--text-primary);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -104,7 +104,7 @@
 
 .btn--primary {
   background: var(--color-primary);
-  color: var(--color-secondary);
+  color: var(--text-primary);
   border-color: var(--color-primary);
 }
 
@@ -389,26 +389,6 @@
   font-size: var(--text-sm);
   color: var(--color-neutral);
   line-height: 1.6;
-}
-
-/* footer cta */
-.footer-cta {
-  padding: var(--space-6) var(--space-5);
-  text-align: center;
-  background: var(--color-secondary);
-}
-
-.footer-cta h2 {
-  font-size: var(--text-3xl);
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: var(--space-4);
-  font-family: 'Georgia', serif;
-  letter-spacing: -0.03em;
-}
-
-.footer-cta .hero-cta {
-  justify-content: center;
 }
 
 /* footer */

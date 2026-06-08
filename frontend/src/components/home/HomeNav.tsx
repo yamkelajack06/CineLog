@@ -118,9 +118,11 @@ export default function HomeNav({ theme, toggleTheme }: Props) {
                 <button className={styles.iconButton} onClick={toggleTheme} aria-label="Toggle theme">
                     {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
                 </button>
-                <button className={styles.avatar} type="button" aria-label="Open profile">
-                    <UserCircle size={20} />
-                </button>
+                <Link to = "/profile">
+                    <button className={styles.avatar} type="button" aria-label="Open profile">
+                        <UserCircle size={20} />
+                    </button>
+                </Link>
             </div>
         </nav>
     );

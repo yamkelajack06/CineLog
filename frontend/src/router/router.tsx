@@ -8,6 +8,7 @@ import HomePage from "../pages/HomePage";
 import MovieDetailPage from "../pages/MovieDetailsPage";
 import Dashboard from "../pages/Dashboard";
 import WatchList from "../pages/Watchlist";
+import Profile from "../pages/Profile";
 
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: "/details/:mediaType/:id", element: <MovieDetailPage /> },
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/watchlist", element: <WatchList /> },
+  {path: "/profile", element: <Profile/>}
 ]);
 
 export default router;

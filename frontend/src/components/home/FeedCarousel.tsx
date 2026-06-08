@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { FeedItem } from "../../hooks/useFeed";
 import styles from "../../styles/home.module.css";
@@ -72,7 +72,7 @@ export default function FeedCarousel({ title, items, id }: Props) {
                         <div className={styles.movieInfo}>
                             <h3 className={styles.movieTitle}>{item.title}</h3>
                             <div className={styles.movieMeta}>
-                                <span className={styles.movieRating}>★ {item.vote_average?.toFixed(1)}</span>
+                                <span className={styles.movieRating}><Star size={16} className={styles.starIcon} /> {item.vote_average?.toFixed(1)}{item.vote_average?.toFixed(1)}</span>
                                 <span className={styles.movieDate}>{item.release_date?.slice(0, 4)}</span>
                             </div>
                         </div>

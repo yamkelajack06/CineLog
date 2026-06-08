@@ -42,6 +42,9 @@ class Login:
                         "UPDATE users SET failed_login_attempts = :attempts, lockout_expiry = NOW() + INTERVAL '1 hour' WHERE id = :id",
                         {"attempts": new_attempts, "id": user_data["id"]}
                     )
+
+                    #TODO: send an email to the user notifying them that the account has been locked because of too many login attempts
+
                     return ApiResponse(status="error", message="Too many failed attempts. Account locked for 1 hour")
 
                 Database.query(
