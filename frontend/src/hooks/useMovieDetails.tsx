@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "https://cinelog-erte.onrender.com";
 
 export interface CastMember {
     id: number;

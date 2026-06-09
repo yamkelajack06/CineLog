@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { FeedItem } from "./useFeed";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = "https://cinelog-erte.onrender.com";
 
 export function useSearch() {
     const [query, setQuery] = useState("");

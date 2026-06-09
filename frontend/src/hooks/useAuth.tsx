@@ -14,7 +14,7 @@ export interface AuthUser {
     status: string;
 }
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "https://cinelog-erte.onrender.com";
 
 async function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
