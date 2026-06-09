@@ -5,7 +5,7 @@ from schemas.response import ApiResponse
 
 load_dotenv()
 
-class Movie_Utils:
+class TMDB_Client:
     #setup the movie database api call
     @staticmethod
     def make_request(endpoint:str) -> ApiResponse:

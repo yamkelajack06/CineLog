@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from schemas.response import ApiResponse
 from services.movie_service import MovieService
-from utilities.movie_utils import Movie_Utils
+from services.tmdb_client import TMDB_Client
 import json
 
 router = APIRouter(prefix="/tv", tags=["TV Shows"])
@@ -12,7 +12,7 @@ def handle_tv_details(tv_id: int) -> ApiResponse:
     result = MovieService.get_tv_details(tv_id)
     if result.status == "error":
         return result
-    formatted = Movie_Utils.format_movie_details(json.loads(result.data))
+    formatted = TMDB_Client.format_movie_details(json.loads(result.data))
     return ApiResponse(status="success", data=formatted)
 
 

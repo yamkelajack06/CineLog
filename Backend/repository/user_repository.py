@@ -2,7 +2,7 @@ from schemas.response import ApiResponse
 from database.database import Database
 from schemas.user import UserBase
 
-class Database_Utils:
+class User_Repository:
     
     @staticmethod
     def check_user_exists(user: UserBase) -> bool | ApiResponse:
