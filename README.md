@@ -41,24 +41,8 @@ Built with a robust custom authentication system and seamless TMDB integration, 
 **Backend**
 * **Framework:** Python (FastAPI)
 * **Data Validation:** Pydantic (V2)
-* **Database:** Relational SQL Database (PostgreSQL/SQLite)
+* **Database:** Relational SQL Database (PostgreSQL)
 * **External APIs:** The Movie Database (TMDB) API
-
----
-
-## Design System
-
-CineLog utilizes a strict, utilitarian visual language inspired by professional film databases like IMDb. 
-
-* **Background:** Pure Black (`#000000`)
-* **Surfaces & Cards:** Dark Gray (`#1A1A1A`)
-* **Primary Text:** Crisp White (`#FFFFFF`)
-* **Secondary Text:** Muted Gray (`#B3B3B3`)
-* **Brand Accent:** Cinema Gold (`#F5C518`)
-* **Borders:** Subtle Gray (`#333333`)
-* **Typography:** Geometric sans-serif (`Inter` or `Roboto`).
-* **Geometry:** Sharp corners (2px-4px border radius), flat components, and zero gradients or drop-shadows.
-
 ---
 
 ## Local Development Setup
