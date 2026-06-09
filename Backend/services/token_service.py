@@ -11,7 +11,7 @@ from utilities.general_utils import General_Utils
 from database.database import Database
 
 load_dotenv() 
-class Email_Utils:
+class Token_Service:
     #token generation
     @staticmethod
     def generate_token(user: UserInDB) -> Token:

@@ -12,7 +12,7 @@ from authentication.register import Register
 from services.email_service import Email_Service
 from database.database import Database
 from authentication.login import Login
-from utilities.email_utils import Email_Utils
+from services.token_service import Token_Service
 from authentication.password_reset import PasswordReset
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -99,7 +99,7 @@ async def handle_verify_token(request: VerifyTokenRequest) -> ApiResponse:
         return ApiResponse(status="error", message="Account is already verified.")
 
     # This returns a boolean (True/False)
-    is_valid = Email_Utils.verify_token(user_data["id"], request.token)
+    is_valid = Token_Service.verify_token(user_data["id"], request.token)
 
     # Check the boolean directly
     if is_valid:

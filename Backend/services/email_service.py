@@ -3,11 +3,8 @@ from datetime import datetime, timedelta
 from schemas.response import ApiResponse
 from schemas.user import UserInDB
 from schemas.token import Token
-from utilities.email_utils import Email_Utils
+from services.token_service import Token_Service
 from database.database import Database
-import os
-
-
 class Email_Service:
     #store and track pending verification and reset tokens separately
     pending_verification_tokens: dict[str, Token] = {}
@@ -17,10 +14,10 @@ class Email_Service:
     @staticmethod
     async def send_verification_email(user: UserInDB) -> ApiResponse:
         TOKEN_TYPE = "Verification Token"
-        token = Email_Utils.generate_token(user)
+        token = Token_Service.generate_token(user)
         now = datetime.now()
         expiry_str = (now + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
-        result = Email_Utils.send_email(user.email, TOKEN_TYPE, token.raw_token,expiry_str)
+        result = Token_Service.send_email(user.email, TOKEN_TYPE, token.raw_token,expiry_str)
 
         if result.status_code != 200:
             return ApiResponse(status = "error", message = "sending email failed", data = result.json())
@@ -87,10 +84,10 @@ class Email_Service:
     @staticmethod
     async def send_reset_token(user: UserInDB) -> ApiResponse:
         TOKEN_TYPE = "Password Reset Token"
-        token = Email_Utils.generate_token(user)
+        token = Token_Service.generate_token(user)
         now = datetime.now()
         expiry_str = (now + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
-        result = Email_Utils.send_reset_email(user.email, TOKEN_TYPE, token.raw_token, expiry_str)
+        result = Token_Service.send_reset_email(user.email, TOKEN_TYPE, token.raw_token, expiry_str)
 
         if result.status_code != 200:
             return ApiResponse(status = "error", message = "sending email failed", data = result.json())
