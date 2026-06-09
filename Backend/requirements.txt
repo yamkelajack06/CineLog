@@ -1,29 +1,14 @@
-# Core framework
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
-
-# Data validation
-pydantic==2.7.4
-pydantic-core==2.18.4
-
-# Database (PostgreSQL + ORM/driver)
+pydantic==2.7.1
+pydantic-core==2.18.2
 SQLAlchemy==2.0.30
 psycopg2-binary==2.9.9
-
-# Email + SMTP
 aiosmtplib==2.0.2
-
-# Security & authentication
 passlib[bcrypt]==1.7.4
 python-jose==3.3.0
-
-# Token handling / rate limiting
 itsdangerous==2.2.0
 slowapi==0.1.8
-
-# External API requests (TMDB, YouTube trailers, etc.)
 httpx==0.27.0
 requests==2.32.3
-
-# Utilities
 python-dotenv==1.0.1
