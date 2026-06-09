@@ -34,15 +34,20 @@ Built with a robust custom authentication system and seamless TMDB integration, 
 ## Tech Stack
 
 **Frontend**
-* **Framework:** React.js
+* **Language:** Typescript
+* **Framework:** React.ts
 * **Styling:** Vanilla CSS (Implementing a strict, custom design system)
 * **Icons:** Lucide React
 
 **Backend**
-* **Framework:** Python (FastAPI)
+* **Language:**Python
+* **Framework:** FastAPI
 * **Data Validation:** Pydantic (V2)
 * **Database:** Relational SQL Database (PostgreSQL)
 * **External APIs:** The Movie Database (TMDB) API
+
+**Tools**
+* **SMTP**: Email sending
 ---
 
 ## Local Development Setup
