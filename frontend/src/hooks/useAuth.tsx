@@ -72,7 +72,6 @@ export function useAuth() {
     error,
     setError,
     success,
-    setSuccess,
     clearStatus,
     handleResponse,
   } = useApiStatus();
@@ -132,7 +131,6 @@ export function usePasswordResetRequest() {
     error,
     setError,
     success,
-    setSuccess,
     clearStatus,
     handleResponse,
   } = useApiStatus();
@@ -164,7 +162,6 @@ export function useResetPassword() {
     error,
     setError,
     success,
-    setSuccess,
     clearStatus,
     handleResponse,
   } = useApiStatus();
@@ -202,7 +199,6 @@ export function useVerify(email: string) {
     error,
     setError,
     success,
-    setSuccess,
     clearStatus,
     handleResponse,
   } = useApiStatus();
