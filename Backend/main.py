@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from router.auth_router import router as auth_router
 from router.movie_router import router as movie_router
 from router.tv_router import router as tv_router
+from router.watchlist_router import router as watchlist_router
 
 app = FastAPI()
 
@@ -22,3 +23,4 @@ def read_root():
 app.include_router(auth_router)
 app.include_router(movie_router)
 app.include_router(tv_router)
+app.include_router(watchlist_router)
