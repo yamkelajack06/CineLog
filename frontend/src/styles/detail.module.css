@@ -275,3 +275,56 @@
     grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
   }
 }
+
+/* detail page action buttons */
+.detailActions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.detailActionBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.1rem 2rem;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-base);
+}
+
+.detailActionBtn:hover:not(:disabled) {
+    background: var(--surface-card);
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+}
+
+.detailActionBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.detailActionActive {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.detailActionActive:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: #fff;
+    opacity: 0.88;
+}
+
+.detailActionWatched {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+}

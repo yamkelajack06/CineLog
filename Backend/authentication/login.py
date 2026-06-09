@@ -60,16 +60,12 @@ class Login:
             )
 
             # Build and return user object
-            user = UserInDB(
-                id=user_data["id"],
-                username=user_data["username"],
-                email=user_data["email"],
-                password_hash=user_data["password_hash"],
-                status=user_data["status"],
-                failed_login_attempts=0,
-                lockout_expiry=None,
-                created_at=user_data.get("created_at")
-            )
+            return ApiResponse(status="success", message="Login successful", data={
+                "id": user_data["id"],
+                "username": user_data["username"],
+                "email": user_data["email"],
+                "status": user_data["status"],
+            })
 
             return ApiResponse(status="success", message="Login successful", data=user.model_dump())
 

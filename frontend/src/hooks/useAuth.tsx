@@ -7,8 +7,14 @@ type ApiResponse<T = unknown> = {
   message: string;
   data?: T;
 };
+export interface AuthUser {
+    id: string;
+    username: string;
+    email: string;
+    status: string;
+}
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = "http://localhost:8000";
 
 async function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -47,19 +53,48 @@ function useApiStatus() {
     return true;
   };
 
-  return { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse };
+  return {
+    loading,
+    setLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    clearStatus,
+    handleResponse,
+  };
 }
 
 export function useAuth() {
-  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+  const {
+    loading,
+    setLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    clearStatus,
+    handleResponse,
+  } = useApiStatus();
 
-  async function login(email: string, password: string) {
+  async function login(
+    email: string,
+    password: string,
+    storeUser: (u: AuthUser) => void,
+  ) {
     clearStatus();
     setLoading(true);
 
     try {
-      const response = await post("/auth/login", { email, password });
-      return handleResponse(response);
+      const response = await post<AuthUser>("/auth/login", { email, password });
+      const ok = handleResponse(response);
+
+      // store user in auth context on success
+      if (ok && response.data) {
+        storeUser(response.data);
+      }
+
+      return ok;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to login");
       return false;
@@ -73,7 +108,11 @@ export function useAuth() {
     setLoading(true);
 
     try {
-      const response = await post("/auth/register", { username, email, password });
+      const response = await post("/auth/register", {
+        username,
+        email,
+        password,
+      });
       return handleResponse(response);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to register");
@@ -87,7 +126,16 @@ export function useAuth() {
 }
 
 export function usePasswordResetRequest() {
-  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+  const {
+    loading,
+    setLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    clearStatus,
+    handleResponse,
+  } = useApiStatus();
 
   async function requestReset(email: string) {
     clearStatus();
@@ -97,7 +145,9 @@ export function usePasswordResetRequest() {
       const response = await post("/auth/request-password-reset", { email });
       return handleResponse(response);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to request password reset");
+      setError(
+        err instanceof Error ? err.message : "Unable to request password reset",
+      );
       return false;
     } finally {
       setLoading(false);
@@ -108,9 +158,22 @@ export function usePasswordResetRequest() {
 }
 
 export function useResetPassword() {
-  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+  const {
+    loading,
+    setLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    clearStatus,
+    handleResponse,
+  } = useApiStatus();
 
-  async function resetPassword(email: string, token: string, newPassword: string) {
+  async function resetPassword(
+    email: string,
+    token: string,
+    newPassword: string,
+  ) {
     clearStatus();
     setLoading(true);
 
@@ -133,7 +196,16 @@ export function useResetPassword() {
 }
 
 export function useVerify(email: string) {
-  const { loading, setLoading, error, setError, success, setSuccess, clearStatus, handleResponse } = useApiStatus();
+  const {
+    loading,
+    setLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    clearStatus,
+    handleResponse,
+  } = useApiStatus();
 
   async function verifyToken(token: string) {
     clearStatus();

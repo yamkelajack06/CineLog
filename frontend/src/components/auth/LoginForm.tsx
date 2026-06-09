@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthContext";
 import Feedback from "./Feedback";
 import styles from "../../styles/auth.module.css";
 
@@ -8,12 +9,13 @@ export default function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { login: storeUser } = useAuthContext();
     const { loading, error, success, login } = useAuth();
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const ok = await login(email, password);
+        const ok = await login(email, password, storeUser);
         if (ok) {
             navigate("/browse", { replace: true });
         }

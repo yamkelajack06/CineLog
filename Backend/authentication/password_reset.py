@@ -2,7 +2,7 @@ from datetime import datetime
 from schemas.user import UserInDB
 from schemas.response import ApiResponse
 from utilities.general_utils import General_Utils
-from utilities.email_utils import Email_Utils
+from services.token_service import Token_Service
 from services.email_service import Email_Service
 from database.database import Database
 
@@ -59,7 +59,7 @@ class PasswordReset:
             user_id = user_data["id"]
 
             # Verify the reset token
-            is_valid = Email_Utils.verify_reset_token(user_id, token)
+            is_valid = Token_Service.verify_reset_token(user_id, token)
 
             if not is_valid:
                 return ApiResponse(status="error", message="Invalid or expired token.")
