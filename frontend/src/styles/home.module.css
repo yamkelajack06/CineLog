@@ -31,6 +31,10 @@
   flex-shrink: 0;
 }
 
+.menu {
+  display:none
+}
+
 .brandMark {
   width: 3.2rem;
   height: 3.2rem;
@@ -629,6 +633,14 @@
     display: none;
   }
 
+  .brandMark {
+    display:None
+  }
+
+  .menu {
+    display:block;
+  }
+  
   .searchInput {
     width: 10rem;
   }
@@ -823,4 +835,102 @@
 
 .starIcon {
     color: var(--icon-rating);
+}
+
+/* Mobile drawer */
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: calc(var(--z-sticky) + 1);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 28rem;
+  max-width: 85vw;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-base);
+  z-index: calc(var(--z-sticky) + 2);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-base);
+}
+
+.drawerBrand {
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+
+.drawerClose {
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.drawerClose:hover {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+
+.drawerNav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3) var(--space-2);
+  gap: 0.2rem;
+}
+
+.drawerLink {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 1.1rem 1.6rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+  display: block;
+}
+
+.drawerLink:hover {
+  color: var(--text-primary);
+  background: var(--surface-muted);
+}
+
+.drawerFooter {
+  padding: var(--space-3) var(--space-2);
+  border-top: 1px solid var(--border-base);
 }

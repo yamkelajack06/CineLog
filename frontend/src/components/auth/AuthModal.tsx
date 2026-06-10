@@ -53,8 +53,6 @@ export default function AuthModal({ onClose }: Props) {
                         Already have an account
                     </button>
                 </div>
-
-                <p className={styles.note}>No credit card required. Free forever.</p>
             </div>
         </div>
     );
