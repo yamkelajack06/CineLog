@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import type { FeedItem } from "./useFeed";
 
-const API_BASE_URL = "https://cinelog-erte.onrender.com";
+// const API_BASE_URL = "https://cinelog-erte.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:8000"
 
 export function useSearch() {
     const [query, setQuery] = useState("");

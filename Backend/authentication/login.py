@@ -67,7 +67,5 @@ class Login:
                 "status": user_data["status"],
             })
 
-            return ApiResponse(status="success", message="Login successful", data=user.model_dump())
-
         except Exception as e:
             return ApiResponse(status="error", message=str(e))

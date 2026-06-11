@@ -1,0 +1,596 @@
+/* page shell */
+
+.page {
+    min-height: 100vh;
+    background: var(--bg-primary);
+}
+
+.pageContent {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+}
+
+.main {
+    padding: var(--space-5) 0 var(--space-6);
+}
+
+/* page header */
+
+.pageHeader {
+    margin-bottom: var(--space-5);
+}
+
+.pageTitle {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.04em;
+    margin-bottom: 0.4rem;
+    text-transform: lowercase;
+}
+
+.pageSubtitle {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* two-column layout */
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 32rem;
+    gap: var(--space-4);
+    align-items: start;
+}
+
+.mainCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.sideCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: sticky;
+    top: calc(6rem + var(--space-4));
+}
+
+/* shared panel */
+
+.panel {
+    background: var(--surface-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.panelTitle {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-3);
+}
+
+.emptyNote {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: 1.6;
+    padding: var(--space-3) 0;
+}
+
+.errorNote {
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+    padding: var(--space-3) 0;
+}
+
+/* metric cards */
+
+.metricGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+}
+
+.metricCard {
+    background: var(--surface-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    transition: box-shadow 0.2s ease;
+}
+
+.metricCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.metricTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.metricLabel {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.metricIcon {
+    display: flex;
+    align-items: center;
+}
+
+.metricValue {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.metricSub {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* watchlist bar */
+
+.wlBar {
+    height: 0.8rem;
+    border-radius: var(--radius-full);
+    background: var(--surface-muted);
+    display: flex;
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+    gap: 2px;
+}
+
+.wlBarFill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+    min-width: 2px;
+}
+
+.wlLegend {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.wlLegendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.wlDot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.wlTotal {
+    margin-left: auto;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* genre breakdown */
+
+.genreList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.genreRow {
+    display: grid;
+    grid-template-columns: 8rem 1fr 2.4rem;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.genreName {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.genreTrack {
+    height: 0.6rem;
+    background: var(--surface-muted);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.genreBar {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+    min-width: 2px;
+}
+
+.genreCount {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-align: right;
+    font-weight: 600;
+}
+
+/* activity heatmap */
+
+.heatmapWrap {
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+}
+
+.heatmapMonths {
+    display: grid;
+    grid-template-columns: repeat(53, 1.2rem);
+    gap: 3px;
+    margin-bottom: 0.4rem;
+    padding-left: 1.6rem;
+}
+
+.heatmapMonth {
+    font-size: 1rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    grid-row: 1;
+}
+
+.heatmapGrid {
+    display: grid;
+    grid-template-rows: repeat(7, 1.2rem);
+    grid-auto-flow: column;
+    grid-auto-columns: 1.2rem;
+    gap: 3px;
+}
+
+.heatmapCell {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.2rem;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-base);
+    transition: transform 0.1s ease;
+}
+
+.heatmapCell:hover {
+    transform: scale(1.3);
+    z-index: 1;
+    position: relative;
+}
+
+/* intensity levels */
+
+.heat0 {
+    background: var(--surface-muted);
+    border-color: var(--border-base);
+}
+
+.heat1 {
+    background: rgba(0, 194, 209, 0.25);
+    border-color: rgba(0, 194, 209, 0.3);
+}
+
+.heat2 {
+    background: rgba(0, 194, 209, 0.45);
+    border-color: rgba(0, 194, 209, 0.5);
+}
+
+.heat3 {
+    background: rgba(0, 194, 209, 0.7);
+    border-color: rgba(0, 194, 209, 0.75);
+}
+
+.heat4 {
+    background: var(--color-primary);
+    border-color: var(--color-accent);
+}
+
+.heatmapLegend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: var(--space-2);
+    justify-content: flex-end;
+}
+
+.heatmapLegendLabel {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0 0.4rem;
+}
+
+/* recent activity carousel */
+
+.carouselSection {
+    background: var(--surface-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.carouselHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.carouselBtns {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.carouselBtn {
+    width: 2.8rem;
+    height: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.carouselBtn:hover {
+    background: var(--surface-muted);
+    color: var(--text-primary);
+}
+
+.carouselViewport {
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0.4rem;
+}
+
+.carouselViewport::-webkit-scrollbar {
+    display: none;
+}
+
+.activityCard {
+    flex-shrink: 0;
+    width: 13rem;
+    scroll-snap-align: start;
+    cursor: pointer;
+}
+
+.activityCard:hover .activityPoster {
+    transform: scale(1.03);
+}
+
+.activityPosterWrap {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+}
+
+.activityPoster {
+    width: 100%;
+    height: 18rem;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.activityPosterFallback {
+    width: 100%;
+    height: 18rem;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.activityTypeBadge {
+    position: absolute;
+    bottom: 0.6rem;
+    left: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+}
+
+.activityInfo {
+    padding: 0 0.2rem;
+}
+
+.activityTitle {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.3rem;
+}
+
+.activityDate {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+/* guest / not logged in */
+
+.guestWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) 0;
+}
+
+.guestBox {
+    text-align: center;
+    max-width: 36rem;
+}
+
+.guestIcon {
+    width: 5.6rem;
+    height: 5.6rem;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    margin: 0 auto var(--space-4);
+}
+
+.guestTitle {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-2);
+}
+
+.guestText {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+}
+
+.guestBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 1.2rem 2.8rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-base);
+}
+
+.guestBtn:hover {
+    opacity: 0.85;
+}
+
+/* skeleton */
+
+.skeletonWrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.skeletonCard {
+    height: 10rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.skeletonBlock {
+    background: var(--surface-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.skeletonCard::after,
+.skeletonBlock::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--skeleton-shimmer) 50%,
+        transparent 100%
+    );
+    animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(100%); }
+}
+
+@media (max-width: 1024px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sideCol {
+        position: static;
+    }
+
+    .metricGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .metricGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pageTitle {
+        font-size: var(--text-2xl);
+    }
+
+    .heatmapGrid {
+        gap: 2px;
+        grid-auto-columns: 1rem;
+    }
+
+    .heatmapCell {
+        width: 1rem;
+        height: 1rem;
+    }
+}

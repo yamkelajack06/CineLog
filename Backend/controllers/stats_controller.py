@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from schemas.response import ApiResponse
-from services.dashboard_service import Dashboard_Service
+from services.stats_service import Dashboard_Service
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
