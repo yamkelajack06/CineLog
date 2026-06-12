@@ -7,7 +7,7 @@ class MovieService:
     # user searches movie by title
     @staticmethod
     def search_movies(query: str) -> ApiResponse:
-        return Movie_Utils.make_request(f"search/multi?query={query}&include_adult=false&language=en-US&page=1")
+        return TMDB_Client.make_request(f"search/multi?query={query}&include_adult=false&language=en-US&page=1")
 
     # user gets details of a specific movie
     @staticmethod
