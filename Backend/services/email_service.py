@@ -20,7 +20,6 @@ class Email_Service:
         result = Token_Service.send_email(user.email, TOKEN_TYPE, token.raw_token,expiry_str)
 
         if result.status_code != 200:
-            print(f"EMAIL FAILED: {error_data}")
             return ApiResponse(status = "error", message = "sending email failed", data = result.json())
         else:
             #store and track valid tokens
