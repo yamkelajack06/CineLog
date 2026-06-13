@@ -1,254 +1,151 @@
-import random
-import os
-import string
-import smtplib
-from email.message import EmailMessage
+import asyncio
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
+from schemas.response import ApiResponse
 from schemas.user import UserInDB
 from schemas.token import Token
-from utilities.general_utils import General_Utils
+from services.token_service import Token_Service
 from database.database import Database
+class Email_Service:
+    #store and track pending verification and reset tokens separately
+    pending_verification_tokens: dict[str, Token] = {}
+    pending_reset_tokens: dict[str, Token] = {}
 
-load_dotenv() 
-class Token_Service:
-    #token generation
+    #sends verification email to user
     @staticmethod
-    def generate_token(user: UserInDB) -> Token:
-        token = ''.join(random.choices(string.digits, k=5))
-        return Token(
-            id = General_Utils.generate_random_id(),
-            user_id = user.id,
-            token_hash = General_Utils.hash_string(token),
-            raw_token = token,
-            expiry = datetime.now() + timedelta(minutes=5)
-        )
-    
-    #token verification
-    @staticmethod
-    def verify_token(user_id: str, token: str) -> bool:
-        try:
-            #get the token associated with the user
-            result = Database.query(
-                "SELECT token_hash, expires_at FROM verification_tokens "
-                "WHERE user_id = :user_id",
+    async def send_verification_email(user: UserInDB) -> ApiResponse:
+        TOKEN_TYPE = "Verification Token"
+        token = Token_Service.generate_token(user)
+        now = datetime.now()
+        expiry_str = (now + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+        result = Token_Service.send_email(user.email, TOKEN_TYPE, token.raw_token,expiry_str)
+
+        if result.status_code != 200:
+            return ApiResponse(status = "error", message = "sending email failed", data = result.json())
+        else:
+            #store and track valid tokens
+            Email_Service.pending_verification_tokens[user.id] = token
+
+            # Save to database
+            Database.query(
+                "INSERT INTO verification_tokens (id, user_id, token_hash, expires_at) VALUES (:id, :user_id, :token_hash, :expiry)",
                 {
-                    "user_id": user_id,
+                    "id": token.id,
+                    "user_id": token.user_id,
+                    "token_hash": token.token_hash,
+                    "expiry": token.expiry
                 }
             )
-            #check if any is in the database
-            if result.status != "success" or not result.data:
-                return False
-            
-            stored_hash: str = result.data[0]["token_hash"]
-            expiry_value = result.data[0].get("expires_at")
-            if expiry_value:
-                if isinstance(expiry_value, str):
-                    expiry_value = datetime.strptime(expiry_value, "%Y-%m-%d %H:%M:%S")
-                if expiry_value < datetime.now():
-                    Database.query(
-                        "DELETE FROM verification_tokens WHERE user_id = :user_id",
-                        {"user_id": user_id}
-                    )
-                    return False
 
-            #compare the entered token against the stored one
-            is_valid = General_Utils.verify_string(token, stored_hash)
+            asyncio.create_task(Email_Service.expire_token(user.id, token.raw_token))
+            return ApiResponse(status="success", message="Verification email sent")
 
-            #if valid clean up both the db and the local state
-            if is_valid:
-                #delete token from database
-                Database.query(
-                    "DELETE FROM verification_tokens WHERE user_id = :user_id",
-                    {"user_id": user_id}
-                )
-   
-                #delete the stored token from local dictionary
-                from services.email_service import Email_Service
-                Email_Service.pending_verification_tokens.pop(user_id, None)
-
-            return is_valid
-
-        except Exception as e:
-            return False
-
-    #sends the verification email to the user
+    #handles the resending of an email token
     @staticmethod
-    def send_email(receiver_email: str, token_type: str, token_value: str, expiry_time: str):
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        username = os.getenv("SMTP_USERNAME")  
-        password = os.getenv("SMTP_PASSWORD")
+    async def resend_verification_email(user: UserInDB) -> ApiResponse:
+        now = datetime.now()
+        state = Email_Service.pending_verification_tokens.get(user.id)
 
-        if not username or not password:
-            class MockError:
-                status_code = 500
-                def json(self): return {"error": "SMTP credentials missing"}
-            return MockError()
+        # send email if the user has no pending ones
+        if not state:
+            return await Email_Service.send_verification_email(user)
 
-        msg = EmailMessage()
-        msg["Subject"] = f"CineLog: {token_type}"
-        msg["From"] = username
-        msg["To"] = receiver_email
+        if state:
+            # check lockout
+            if state.locked_until and now < state.locked_until:
+                remaining = int((state.locked_until - now).total_seconds() / 60)
+                return ApiResponse(status="error", message=f"Account locked. Try again in {remaining} minutes")
 
-        html_content = f"""<!DOCTYPE html>
-        <html>
-        <head>
-        <meta charset="UTF-8">
-        <title>CineLog Token</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
-        <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #ddd; border-radius: 6px; padding: 20px;">
-        <h2 style="color: #2c3e50; margin-top: 0;">Your CineLog Token</h2>
-        <p style="font-size: 15px; color: #333;">Dear User,</p>
-        <p style="font-size: 15px; color: #333;">A secure token has been generated for you. Please use this token to complete your authentication process. The token will expire after 5 minutes.</p>
-        <div style="background: #f4f6f8; border: 1px solid #ccc; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; text-align: center; color: #2c3e50;">
-        {token_value}
-        </div>
-        <p style="font-size: 14px; color: #555;"><strong>Expiry:</strong> {expiry_time}</p>
-        <h3 style="color: #2c3e50; margin-top: 30px;">Important Information</h3>
-        <ul style="font-size: 14px; color: #555; padding-left: 20px;">
-        <li>This token is valid only until the expiry time shown above.</li>
-        <li>Do not share this token with anyone. It grants access to your account.</li>
-        <li>If you did not request this token, please disregard this message.</li>
-        </ul>
-        <p style="font-size: 13px; color: #888; margin-top: 30px;">This is an automated message from CineLog. Please do not reply directly to this email.</p>
-        </div>
-        </body>
-        </html>"""
+            # check 2 minute cooldown period
+            if (now - state.last_request).total_seconds() < 120:
+                return ApiResponse(status="error", message="Please wait 2 minutes before requesting a new token")
 
-        msg.set_content("Please enable HTML to view this message.")
-        msg.add_alternative(html_content, subtype="html")
+            # check max requests
+            if state.request_count >= 3:
+                state.locked_until = now + timedelta(hours=1)
+                state.request_count = 0
+                return ApiResponse(status="error", message="Too many requests. Account locked for 1 hour")
 
-        try:
-            with smtplib.SMTP(smtp_server, smtp_port) as server:
-                server.starttls()
-                server.login(username, password)
-                server.send_message(msg)
-            
-            class MockResponse:
-                status_code = 200
-                def json(self): return {"message": "success"}
-            return MockResponse()
-
-        except Exception as e:
-            #capture error message before python clears e after the except block
-            error_message = str(e)
-            class MockError:
-                status_code = 500
-                def json(self): return {"error": error_message}
-            return MockError()
+            # delete the old token and send new one
+            Email_Service.pending_verification_tokens.pop(user.id, None)
+            Database.query("DELETE FROM verification_tokens WHERE user_id = :user_id", {"user_id": user.id})
+            return await Email_Service.send_verification_email(user)
         
+    @staticmethod
+    async def expire_token(user_id: str, raw_token: str):
+        await asyncio.sleep(300)
+        current_token = Email_Service.pending_verification_tokens.get(user_id)
+
+        # Only delete if it's the exact same token that started this timer
+        if current_token and current_token.raw_token == raw_token:
+            Email_Service.pending_verification_tokens.pop(user_id, None)
+            Database.query("DELETE FROM verification_tokens WHERE user_id = :user_id", {"user_id": user_id})
+    
     #sends password reset email to user
     @staticmethod
-    def send_reset_email(receiver_email: str, token_type: str, token_value: str, expiry_time: str):
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        username = os.getenv("SMTP_USERNAME")  
-        password = os.getenv("SMTP_PASSWORD")
+    async def send_reset_token(user: UserInDB) -> ApiResponse:
+        TOKEN_TYPE = "Password Reset Token"
+        token = Token_Service.generate_token(user)
+        now = datetime.now()
+        expiry_str = (now + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+        result = Token_Service.send_reset_email(user.email, TOKEN_TYPE, token.raw_token, expiry_str)
 
-        if not username or not password:
-            class MockError:
-                status_code = 500
-                def json(self): return {"error": "SMTP credentials missing"}
-            return MockError()
+        if result.status_code != 200:
+            return ApiResponse(status = "error", message = "sending email failed", data = result.json())
+        else:
+            #store and track valid tokens
+            Email_Service.pending_reset_tokens[user.id] = token
 
-        msg = EmailMessage()
-        msg["Subject"] = f"CineLog: {token_type}"
-        msg["From"] = username
-        msg["To"] = receiver_email
-
-        html_content = f"""<!DOCTYPE html>
-        <html>
-        <head>
-        <meta charset="UTF-8">
-        <title>CineLog Password Reset</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
-        <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #ddd; border-radius: 6px; padding: 20px;">
-        <h2 style="color: #2c3e50; margin-top: 0;">CineLog Password Reset</h2>
-        <p style="font-size: 15px; color: #333;">Dear User,</p>
-        <p style="font-size: 15px; color: #333;">A password reset request has been submitted for your account. Use this token to reset your password. The token will expire after 5 minutes.</p>
-        <div style="background: #f4f6f8; border: 1px solid #ccc; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; text-align: center; color: #2c3e50;">
-        {token_value}
-        </div>
-        <p style="font-size: 14px; color: #555;"><strong>Expiry:</strong> {expiry_time}</p>
-        <h3 style="color: #2c3e50; margin-top: 30px;">Important Information</h3>
-        <ul style="font-size: 14px; color: #555; padding-left: 20px;">
-        <li>This token is valid only until the expiry time shown above.</li>
-        <li>Do not share this token with anyone. It grants access to reset your account password.</li>
-        <li>If you did not request this token, please disregard this message and secure your account.</li>
-        </ul>
-        <p style="font-size: 13px; color: #888; margin-top: 30px;">This is an automated message from CineLog. Please do not reply directly to this email.</p>
-        </div>
-        </body>
-        </html>"""
-
-        msg.set_content("Please enable HTML to view this message.")
-        msg.add_alternative(html_content, subtype="html")
-
-        try:
-            with smtplib.SMTP(smtp_server, smtp_port) as server:
-                server.starttls()
-                server.login(username, password)
-                server.send_message(msg)
-            
-            class MockResponse:
-                status_code = 200
-                def json(self): return {"message": "success"}
-            return MockResponse()
-
-        except Exception as e:
-            #capture error message before python clears e after the except block
-            error_message = str(e)
-            class MockError:
-                status_code = 500
-                def json(self): return {"error": error_message}
-            return MockError()
-
-    #verify password reset token
-    @staticmethod
-    def verify_reset_token(user_id: str, token: str) -> bool:
-        try:
-            #get the token associated with the user
-            result = Database.query(
-                "SELECT token_hash, expires_at FROM password_reset_tokens "
-                "WHERE user_id = :user_id",
+            # Save to database
+            Database.query(
+                "INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at) VALUES (:id, :user_id, :token_hash, :expiry)",
                 {
-                    "user_id": user_id,
+                    "id": token.id,
+                    "user_id": token.user_id,
+                    "token_hash": token.token_hash,
+                    "expiry": token.expiry
                 }
             )
-            #check if any is in the database
-            if result.status != "success" or not result.data:
-                return False
-            
-            stored_hash: str = result.data[0]["token_hash"]
-            expiry_value = result.data[0].get("expires_at")
-            if expiry_value:
-                if isinstance(expiry_value, str):
-                    expiry_value = datetime.strptime(expiry_value, "%Y-%m-%d %H:%M:%S")
-                if expiry_value < datetime.now():
-                    Database.query(
-                        "DELETE FROM password_reset_tokens WHERE user_id = :user_id",
-                        {"user_id": user_id}
-                    )
-                    return False
 
-            #compare the entered token against the stored one
-            is_valid = General_Utils.verify_string(token, stored_hash)
+            asyncio.create_task(Email_Service.expire_reset_token(user.id, token.raw_token))
+            return ApiResponse(status="success", message="Password reset email sent")
 
-            #if valid clean up both the db and the local state
-            if is_valid:
-                #delete token from database
-                Database.query(
-                    "DELETE FROM password_reset_tokens WHERE user_id = :user_id",
-                    {"user_id": user_id}
-                )
+    #handles the resending of a password reset token
+    @staticmethod
+    async def resend_reset_token(user: UserInDB) -> ApiResponse:
+        now = datetime.now()
+        state = Email_Service.pending_reset_tokens.get(user.id)
 
-                from services.email_service import Email_Service
-                Email_Service.pending_reset_tokens.pop(user_id, None)
+        # send email if the user has no pending ones
+        if not state:
+            return await Email_Service.send_reset_token(user)
 
-            return is_valid
+        if state:
+            # check lockout
+            if state.locked_until and now < state.locked_until:
+                remaining = int((state.locked_until - now).total_seconds() / 60)
+                return ApiResponse(status="error", message=f"Account locked. Try again in {remaining} minutes")
 
-        except Exception as e:
-            return False
+            # check 2 minute cooldown period
+            if (now - state.last_request).total_seconds() < 120:
+                return ApiResponse(status="error", message="Please wait 2 minutes before requesting a new token")
+
+            # check max requests
+            if state.request_count >= 3:
+                state.locked_until = now + timedelta(hours=1)
+                state.request_count = 0
+                return ApiResponse(status="error", message="Too many requests. Account locked for 1 hour")
+
+            # delete the old token and send new one
+            Email_Service.pending_reset_tokens.pop(user.id, None)
+            Database.query("DELETE FROM password_reset_tokens WHERE user_id = :user_id", {"user_id": user.id})
+            return await Email_Service.send_reset_token(user)
+
+    @staticmethod
+    async def expire_reset_token(user_id: str, raw_token: str):
+        await asyncio.sleep(300)
+        current_token = Email_Service.pending_reset_tokens.get(user_id)
+
+        # Only delete if it's the exact same token that started this timer
+        if current_token and current_token.raw_token == raw_token:
+            Email_Service.pending_reset_tokens.pop(user_id, None)
+            Database.query("DELETE FROM password_reset_tokens WHERE user_id = :user_id", {"user_id": user_id})
