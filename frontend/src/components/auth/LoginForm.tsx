@@ -58,13 +58,19 @@ export default function LoginForm() {
 
                 <button className={styles.submit} type="submit" disabled={loading}>
                     {loading && <span className={styles.spinner} />}
-                    {loading ? "Signing in…" : "Sign in"}
+                    {loading ? "Signing in..." : "Sign in"}
                 </button>
             </form>
 
             <div className={styles.footerLink}>
                 Forgot your password?{' '}
                 <button type="button" onClick={() => navigate("/forgot-password")}>Reset it</button>
+            </div>
+
+            {/* verify entry point for users who registered but left before verifying */}
+            <div className={styles.footerLink}>
+                Need to verify your account?{' '}
+                <button type="button" onClick={() => navigate("/verify")}>Verify it</button>
             </div>
         </>
     );

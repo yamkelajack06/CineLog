@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Feedback from "./Feedback";
 import styles from "../../styles/auth.module.css";
@@ -11,12 +12,12 @@ export default function RegisterForm() {
     const [localError, setLocalError] = useState<string | null>(null);
 
     const { loading, error, register } = useAuth();
+    const navigate = useNavigate();
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLocalError(null);
 
-        // validate before hitting the api
         if (password.length < 8) {
             setLocalError("Password must be at least 8 characters.");
             return;
@@ -26,10 +27,12 @@ export default function RegisterForm() {
             return;
         }
 
-        register(username, email, password);
+        const ok = await register(username, email, password);
+        if (ok) {
+            navigate("/verify", { state: { email } });
+        }
     }
 
-    // show local validation error first, then api error
     const displayError = localError ?? error;
 
     return (
@@ -95,7 +98,7 @@ export default function RegisterForm() {
 
             <button className={styles.submit} type="submit" disabled={loading}>
                 {loading && <span className={styles.spinner} />}
-                {loading ? "Creating account…" : "Create account"}
+                {loading ? "Creating account..." : "Create account"}
             </button>
         </form>
     );
