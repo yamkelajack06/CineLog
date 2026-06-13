@@ -132,9 +132,10 @@ class Token_Service:
             return MockResponse()
 
         except Exception as e:
+            error_msg = str(e)
             class MockError:
                 status_code = 500
-                def json(self): return {"error": str(e)}
+                def json(self): return {"error": error_msg}
             return MockError()
         
     #sends password reset email to user
@@ -197,9 +198,10 @@ class Token_Service:
             return MockResponse()
 
         except Exception as e:
+            error_msg = str(e)
             class MockError:
                 status_code = 500
-                def json(self): return {"error": str(e)}
+                def json(self): return {"error": error_msg}
             return MockError()
 
     #verify password reset token
