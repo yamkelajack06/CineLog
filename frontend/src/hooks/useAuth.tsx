@@ -12,9 +12,14 @@ export interface AuthUser {
     username: string;
     email: string;
     status: string;
+    token: string;
 }
 
-const API_BASE_URL = "https://cinelog-erte.onrender.com";
+
+
+// const API_BASE_URL = "https://cinelog-erte.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:8000";
+
 
 async function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
   const response = await fetch(`${API_BASE_URL}${path}`, {

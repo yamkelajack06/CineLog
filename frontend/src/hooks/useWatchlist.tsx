@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API_BASE_URL = "https://cinelog-erte.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:8000";
 export interface WatchlistEntry {
     id: string;
     user_id: string;

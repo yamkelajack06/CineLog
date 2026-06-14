@@ -1,14 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from schemas.response import ApiResponse
 from services.movie_service import MovieService
 from services.tmdb_client import TMDB_Client
 import json
+from utilities.auth_middleware import get_current_user
+
+
 
 router = APIRouter(prefix="/tv", tags=["TV Shows"])
 
 
 @router.get("/{tv_id}/details", response_model=ApiResponse)
-def handle_tv_details(tv_id: int) -> ApiResponse:
+def handle_tv_details(tv_id: int, current_user: dict = Depends(get_current_user)) -> ApiResponse:
     result = MovieService.get_tv_details(tv_id)
     if result.status == "error":
         return result
@@ -17,7 +20,7 @@ def handle_tv_details(tv_id: int) -> ApiResponse:
 
 
 @router.get("/{tv_id}/videos", response_model=ApiResponse)
-def handle_tv_videos(tv_id: int) -> ApiResponse:
+def handle_tv_videos(tv_id: int, current_user: dict = Depends(get_current_user)) -> ApiResponse:
     result = MovieService.get_tv_videos(tv_id)
     if result.status == "error":
         return result

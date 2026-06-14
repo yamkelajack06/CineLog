@@ -5,6 +5,7 @@ interface AuthUser {
     username: string;
     email: string;
     status: string;
+    token: string;
 }
 
 interface AuthContextType {
@@ -19,7 +20,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const STORAGE_KEY = "cinelog_user";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    // initialise from localStorage so session persists on refresh
     const [user, setUser] = useState<AuthUser | null>(() => {
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     });
 
-    // keep localStorage in sync whenever user changes
     useEffect(() => {
         if (user) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
@@ -39,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [user]);
 
     const login = (userData: AuthUser) => setUser(userData);
-
     const logout = () => setUser(null);
 
     return (
@@ -49,9 +47,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
-// hook to consume auth context
 export function useAuthContext() {
     const ctx = useContext(AuthContext);
     if (!ctx) throw new Error("useAuthContext must be used inside AuthProvider");
     return ctx;
 }
+

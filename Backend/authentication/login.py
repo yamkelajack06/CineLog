@@ -3,6 +3,7 @@ from schemas.user import UserInDB
 from schemas.response import ApiResponse
 from utilities.general_utils import General_Utils
 from database.database import Database
+from services.jwt_service import JWT_Service
 
 
 class Login:
@@ -59,13 +60,23 @@ class Login:
                 {"id": user_data["id"]}
             )
 
+            #jwt token for authorization
+            # issue jwt on successful login
+            access_token = JWT_Service.create_access_token(
+                user_id=user_data["id"],
+                email=user_data["email"],
+            )
+
             # Build and return user object
             return ApiResponse(status="success", message="Login successful", data={
                 "id": user_data["id"],
                 "username": user_data["username"],
                 "email": user_data["email"],
                 "status": user_data["status"],
+                "access_token": access_token,
+                "token_type": "bearer",
             })
 
         except Exception as e:
             return ApiResponse(status="error", message=str(e))
+
